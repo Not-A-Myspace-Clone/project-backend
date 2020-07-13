@@ -12,6 +12,8 @@ app.use(cors());
 app.use(express.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
+require("./routes")(app);
+
 // routes.route(app);
 
 app.listen(PORT, () => console.log(`API is listening on port ${PORT}`));
