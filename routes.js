@@ -1,8 +1,9 @@
-const path = require('path')
-const fs = require("fs");
+const login = require('./controllers/login');
 const mysql = require("./models/connection");
 module.exports = (app) => {
-
+    app.get('/', login.landing);
+    app.post('/auth', login.authorize);
+    app.get('/home', login.home);
     app.get("/user", async (request, response) => {
         const connection = await mysql.connect();
         const [data] = await connection.query(`SELECT * FROM user_info`);
@@ -20,15 +21,5 @@ module.exports = (app) => {
         const [data] = await connection.query(`UPDATE user_info SET ? WHERE id = ?`, [user_obj, id]);
         response.json({updated: true, ...request.body});
         return data;
-    })
-
-    //--------------------------------------  
+    }) 
 }
-// const products = require('./controllers/users');
-
-// exports.route = (app) => {
-//     app.post('/products', products.create);
-//     app.get('/products/:id?', products.read);
-//     app.patch('/products/:id', products.update);
-//     //app.delete('/products/:id', products.delete);
-// }

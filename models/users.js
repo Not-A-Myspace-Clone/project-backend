@@ -1,5 +1,11 @@
 const mysql = require('./connection');
 
+exports.getUser = async (username, password) => {
+    const connection = await mysql.connect();
+    const [data] = await connection.query(`SELECT * FROM accounts WHERE username = ? AND password = ?`, [username, password]);
+    return data;
+}
+
 exports.insert = async (product_obj) => {
     const connection = await mysql.connect();
     const [data] = await connection.query(`INSERT INTO products SET ?`, product_obj);
@@ -16,4 +22,5 @@ exports.update = async (id, product_obj) => {
     const connection = await mysql.connect();
     const [data] = await connection.query(`UPDATE products SET ? WHERE id = ?`, [product_obj, id]);
     return data;
+
 }
