@@ -2,15 +2,13 @@ const Login = require('../classes/Login');
 const path = require('path');
 
 exports.landing = async (req, res) => {
-    await req.session.destroy();
-	res.sendFile(path.join(__dirname + '/../../project-frontend/views/login.html'));
+	await res.sendFile(path.join(__dirname + '/../../project-frontend/views/login.html'));
 };
 
 exports.authorize = async (req, res) => {
     const user = new Login(req.body);
     if (user.exists()) {
-        const check = await user.verifyUser();
-        if (check) {
+        if (await user.verifyUser()) {
             await user.populateUser();
             req.session.loggedin = true;
             req.session.username = user.username;
@@ -31,4 +29,33 @@ exports.home = async (req, res) => {
 		res.send('Please login to view this page!');
 	}
 	res.end();
+};
+
+exports.createUser = async (req, res) => {
+    await res.sendFile(path.join(__dirname + '/../../project-frontend/views/createuser.html'));
+}
+
+exports.createAuth = async (req, res) => {
+    const user = new Login(req.body);
+    if (user.exists()) {
+        if (await user.existingUsername()) {
+            res.send('Cannot create user, as username already exists!');
+            res.end();
+        } else {
+            if (await user.existingEmail()) {
+                res.send('Cannot create user, as email already exists!');
+                res.end(); 
+            } else {
+                await user.registerUser();
+                res.json(user.toLiteral());
+            }
+        }
+    } else {
+        res.send('Please enter Username, Email, and Password!');
+		res.end();
+    }
+};
+
+exports.deleteUser = async (req, res) => {
+    await user.deleteUser(req.params.id);
 };
