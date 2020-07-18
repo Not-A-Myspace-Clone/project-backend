@@ -47,9 +47,28 @@ class Login {
         return (results.length > 0) ? true : false;
     }
 
+    async registerUser() {
+        const results = await users.insertUser(this._item);
+        this._item.id = results.insertId;
+    }
+
+    async existingUsername() {
+        const results = await users.getUserByName(this._item.username);
+        return (results.length > 0) ? true : false;
+    }
+
+    async existingEmail() {
+        const results = await users.getUserByEmail(this._item.email);
+        return (results.length > 0) ? true : false;
+    }
+
     async populateUser() {
         const result = await users.getUser(this._item.username);
         this._item = result;
+    }
+
+    async deleteUser(id){
+        await users.deleteUser(this._item.id);
     }
     
 }
